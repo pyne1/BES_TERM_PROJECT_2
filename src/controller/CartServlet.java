@@ -42,11 +42,17 @@ public class CartServlet extends HttpServlet {
                 if (p != null) {
                     cart.addItem(p);
                 }
-                resp.sendRedirect("cart");
+
+            // Update cart count
+                session.setAttribute("cartCount", cart.getTotalQuantity());  
+            // Stay on the same page
+                String referer = req.getHeader("referer");
+                resp.sendRedirect(referer);
                 break;
 
             case "remove":
                 cart.removeItem(req.getParameter("itemID"));
+                session.setAttribute("cartCount", cart.getTotalQuantity());
                 resp.sendRedirect("cart");
                 break;
 
@@ -54,6 +60,7 @@ public class CartServlet extends HttpServlet {
                 String id = req.getParameter("itemID");
                 int qty = Integer.parseInt(req.getParameter("qty"));
                 cart.updateQuantity(id, qty);
+                session.setAttribute("cartCount", cart.getTotalQuantity());
                 resp.sendRedirect("cart");
                 break;
 

@@ -49,6 +49,7 @@
 </head>
 <body>
 <div class="container">
+	<%@ include file="cartIcon.jsp" %>
     <%
         Product p = (Product) request.getAttribute("product");
         if (p == null) {
@@ -59,6 +60,10 @@
         } else {
     %>
         <h1><%= p.getName() %></h1>
+        <img src="<%= p.getImageUrl() %>" 
+        alt="<%= p.getName() %>" 
+        style="max-width:250px; border-radius:8px; margin:20px 0;">
+        
         <p class="meta">
             Category: <b><%= p.getCategory() %></b> |
             Brand: <b><%= p.getBrand() %></b> |

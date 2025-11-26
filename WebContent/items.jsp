@@ -72,6 +72,7 @@
 </head>
 <body>
 <div class="container">
+	<%@ include file="cartIcon.jsp" %>
     <h1>Catalog</h1>
     <p>Browse all products, or filter by brand or category.</p>
 

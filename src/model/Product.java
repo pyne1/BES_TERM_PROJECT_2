@@ -5,10 +5,11 @@ public class Product {
     private String itemID;
     private String name;
     private String description;
-    private String category;
     private String brand;
+    private String category;
     private int quantity;
     private double price;
+    private String imageUrl;
 
     public Product() {}
 
@@ -43,4 +44,7 @@ public class Product {
 
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

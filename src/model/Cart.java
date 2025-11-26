@@ -46,4 +46,12 @@ public class Cart {
     public void clear() {
         items.clear();
     }
+
+    public int getTotalQuantity(){
+        int total = 0;
+        for (CartItem item : items.values()){
+            total += item.getQuantity();
+        }
+        return total;
+    }
 }
