@@ -82,7 +82,11 @@
                 <form action="cart" method="get" class="qty-form">
                     <input type="hidden" name="todo" value="update">
                     <input type="hidden" name="itemID" value="<%= id %>">
-                    <input type="number" name="qty" value="<%= ci.getQuantity() %>" min="1">
+                    <input type="number" name="qty"
+       				value="<%= ci.getQuantity() %>"
+       				min="1"
+       				max="<%= ci.getProduct().getQuantity() %>">
+
                     <button type="submit">Update</button>
                 </form>
             </td>

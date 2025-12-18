@@ -176,4 +176,19 @@ public class ProductDao {
             e.printStackTrace();
         }
     }
+    
+    public static int getStockById(String id) {
+        String sql = "SELECT stock FROM products WHERE product_id = ?";
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, Integer.parseInt(id));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt("stock");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
 }

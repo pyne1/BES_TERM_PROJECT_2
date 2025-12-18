@@ -54,4 +54,10 @@ public class Cart {
         }
         return total;
     }
+    
+    public int getQuantity(String itemID) {
+        CartItem ci = items.get(itemID);
+        return (ci == null) ? 0 : ci.getQuantity();
+    }
+
 }
