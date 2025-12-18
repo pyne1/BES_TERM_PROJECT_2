@@ -8,44 +8,35 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
-import javax.servlet.http.Cookie;
-import java.util.StringTokenizer;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.net.URLDecoder;
-
-
-
 
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    
-    
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)   throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession(true);
-
+        Object user = session.getAttribute("currentCustomer");
+        boolean loggedIn = (user != null);
 
         Cart cart = (Cart) session.getAttribute("cart");
 
         if (cart == null) {
-            cart = loadCartFromCookie(req);
+            cart = loggedIn ? loadCartFromCookie(req) : new Cart();
             session.setAttribute("cart", cart);
             session.setAttribute("cartCount", cart.getTotalQuantity());
         }
 
-        
-     // Refresh stock values in cart items so UI max is correct
         for (model.CartItem ci : cart.getItems()) {
             String pid = ci.getProduct().getItemID();
             int latestStock = ProductDao.getStockById(pid);
-            ci.getProduct().setQuantity(latestStock); // Product.quantity is used as stock in your model
+            ci.getProduct().setQuantity(latestStock);
         }
-
 
         String todo = req.getParameter("todo");
 
@@ -55,45 +46,42 @@ public class CartServlet extends HttpServlet {
         }
 
         switch (todo) {
-        case "add":
-            String itemID = req.getParameter("itemID");
-            Product p = ProductDao.getById(itemID);
+            case "add": {
+                String itemID = req.getParameter("itemID");
+                Product p = ProductDao.getById(itemID);
 
-            if (p != null) {
-                int stock = p.getQuantity();              // comes from p.stock in DB
-                int currentQty = cart.getQuantity(itemID);
-                int requestedQty = currentQty + 1;
+                if (p != null) {
+                    int stock = p.getQuantity();
+                    int currentQty = cart.getQuantity(itemID);
+                    int requestedQty = currentQty + 1;
 
-                if (stock <= 0) {
-                    session.setAttribute("cartMsg", "Out of stock.");
-                } else if (requestedQty > stock) {
-                    session.setAttribute("cartMsg", "Cannot add more than available stock (" + stock + ").");
-                } else {
-                    cart.addItem(p);
-                    session.removeAttribute("cartMsg");
+                    if (stock <= 0) {
+                        session.setAttribute("cartMsg", "Out of stock.");
+                    } else if (requestedQty > stock) {
+                        session.setAttribute("cartMsg", "Cannot add more than available stock (" + stock + ").");
+                    } else {
+                        cart.addItem(p);
+                        session.removeAttribute("cartMsg");
+                    }
                 }
+
+                session.setAttribute("cartCount", cart.getTotalQuantity());
+                if (loggedIn) saveCartToCookie(req, cart, resp);
+
+                String referer = req.getHeader("referer");
+                resp.sendRedirect(referer);
+                break;
             }
 
-            session.setAttribute("cartCount", cart.getTotalQuantity());
-            saveCartToCookie(req, cart, resp);
-            String referer = req.getHeader("referer");
-            resp.sendRedirect(referer);
-            break;
-
-
-                
-                
-                
-            case "remove":
+            case "remove": {
                 cart.removeItem(req.getParameter("itemID"));
                 session.setAttribute("cartCount", cart.getTotalQuantity());
-                saveCartToCookie(req, cart, resp);
+                if (loggedIn) saveCartToCookie(req, cart, resp);
                 resp.sendRedirect("cart");
                 break;
-                
-                
+            }
 
-            case "update":
+            case "update": {
                 String id = req.getParameter("itemID");
                 int qty = Integer.parseInt(req.getParameter("qty"));
 
@@ -114,18 +102,16 @@ public class CartServlet extends HttpServlet {
                 }
 
                 session.setAttribute("cartCount", cart.getTotalQuantity());
-                saveCartToCookie(req, cart, resp);
+                if (loggedIn) saveCartToCookie(req, cart, resp);
                 resp.sendRedirect("cart");
                 break;
+            }
 
-
-                
-                
             default:
                 req.getRequestDispatcher("cart.jsp").forward(req, resp);
         }
     }
-    
+
     private void saveCartToCookie(HttpServletRequest req, Cart cart, HttpServletResponse resp) {
         StringBuilder sb = new StringBuilder();
 
@@ -133,7 +119,7 @@ public class CartServlet extends HttpServlet {
             sb.append(ci.getProduct().getItemID())
               .append(":")
               .append(ci.getQuantity())
-              .append("|"); // safe separator (not comma)
+              .append("|");
         }
 
         if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
@@ -149,7 +135,6 @@ public class CartServlet extends HttpServlet {
         cookie.setMaxAge(60 * 60 * 24 * 7);
         resp.addCookie(cookie);
     }
-
 
     private Cart loadCartFromCookie(HttpServletRequest req) {
         Cart cart = new Cart();
@@ -189,5 +174,4 @@ public class CartServlet extends HttpServlet {
         }
         return cart;
     }
-
 }

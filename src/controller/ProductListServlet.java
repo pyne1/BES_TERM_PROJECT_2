@@ -9,7 +9,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 import model.Cart;
-import javax.servlet.http.Cookie;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
@@ -25,8 +24,13 @@ public class ProductListServlet extends HttpServlet {
 
         HttpSession session = request.getSession(true);
 
+        Object user = session.getAttribute("currentCustomer");
+
         if (session.getAttribute("cart") == null) {
-            Cart cart = loadCartFromCookie(request);
+            Cart cart = new Cart();
+            if (user != null) {
+                cart = loadCartFromCookie(request);
+            }
             session.setAttribute("cart", cart);
             session.setAttribute("cartCount", cart.getTotalQuantity());
         }

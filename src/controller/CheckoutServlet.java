@@ -20,6 +20,15 @@ public class CheckoutServlet extends HttpServlet {
         return paymentCounter % 3 != 0;
     }
 
+    private void clearCartCookie(HttpServletRequest req, HttpServletResponse resp) {
+        Cookie cookie = new Cookie("cart", "");
+        String path = req.getContextPath();
+        if (path == null || path.isEmpty()) path = "/";
+        cookie.setPath(path);
+        cookie.setMaxAge(0);
+        resp.addCookie(cookie);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -28,7 +37,6 @@ public class CheckoutServlet extends HttpServlet {
 
         Customer customer = (Customer) session.getAttribute("currentCustomer");
         if (customer == null) {
-            session.setAttribute("redirectAfterLogin", "checkout");
             request.getRequestDispatcher("forceLogin.jsp").forward(request, response);
             return;
         }
@@ -51,7 +59,6 @@ public class CheckoutServlet extends HttpServlet {
 
         Customer customer = (Customer) session.getAttribute("currentCustomer");
         if (customer == null) {
-            session.setAttribute("redirectAfterLogin", "checkout");
             request.getRequestDispatcher("forceLogin.jsp").forward(request, response);
             return;
         }
@@ -82,6 +89,7 @@ public class CheckoutServlet extends HttpServlet {
             request.setAttribute("cardCvv", cardCvv);
             request.setAttribute("paymentError", "CC Authorization Failed.");
             request.setAttribute("cart", cart);
+
             request.getRequestDispatcher("checkout.jsp").forward(request, response);
             return;
         }
@@ -96,6 +104,7 @@ public class CheckoutServlet extends HttpServlet {
 
         session.removeAttribute("cart");
         session.setAttribute("cartCount", 0);
+        clearCartCookie(request, response);
 
         request.getRequestDispatcher("orderConfirmation.jsp").forward(request, response);
     }
