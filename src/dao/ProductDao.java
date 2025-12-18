@@ -191,5 +191,89 @@ public class ProductDao {
         }
         return 0;
     }
+    
+    private static String orderBy(String sort) {
+        if ("price_asc".equalsIgnoreCase(sort)) 
+            return " ORDER BY p.price ASC";
+
+        if ("price_desc".equalsIgnoreCase(sort)) 
+            return " ORDER BY p.price DESC";
+
+        if ("name_asc".equalsIgnoreCase(sort)) 
+            return " ORDER BY p.name ASC";
+
+        if ("name_desc".equalsIgnoreCase(sort)) 
+            return " ORDER BY p.name DESC";
+
+        return " ORDER BY p.product_id";
+    }
+    
+   //Overloadeded methods for sorting
+    public static List<Product> getAllProducts(String sort) {
+        List<Product> list = new ArrayList<>();
+        String sql = BASE_SELECT + orderBy(sort);
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    
+    public static List<Product> getByBrand(String brand, String sort) {
+        List<Product> list = new ArrayList<>();
+        String sql = BASE_SELECT + " WHERE b.name = ? " + orderBy(sort);
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, brand);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public static List<Product> getByCategory(String category, String sort) {
+        List<Product> list = new ArrayList<>();
+        String sql = BASE_SELECT + " WHERE c.name = ? " + orderBy(sort);
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, category);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapRow(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+
+
+
 
 }

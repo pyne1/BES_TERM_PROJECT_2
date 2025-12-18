@@ -86,6 +86,8 @@
         String selectedView = (String) request.getAttribute("selectedView");
         String selectedBrand = (String) request.getAttribute("selectedBrand");
         String selectedCategory = (String) request.getAttribute("selectedCategory");
+        String selectedSort = (String) request.getAttribute("selectedSort");
+        if (selectedSort == null) selectedSort = "none";       
         if (selectedView == null) selectedView = "all";
     %>
 
@@ -132,6 +134,22 @@
             </select>
             <button type="submit">Filter</button>
         </form>
+		<form action="catalog" method="get" style="display:inline;">
+    	<label for="sortSelect">Sort:</label>
+
+    		<!-- keep current filter selection when sorting -->
+    		<input type="hidden" name="view" value="<%= selectedView %>">
+    		<input type="hidden" name="brand" value="<%= selectedBrand == null ? "" : selectedBrand %>">
+    		<input type="hidden" name="category" value="<%= selectedCategory == null ? "" : selectedCategory %>">
+
+    		<select name="sort" id="sortSelect">
+        	<option value="none" <%= "none".equals(selectedSort) ? "selected" : "" %>>-- price --</option>
+        	<option value="price_asc" <%= "price_asc".equals(selectedSort) ? "selected" : "" %>>Low -> High</option>
+        	<option value="price_desc" <%= "price_desc".equals(selectedSort) ? "selected" : "" %>>High -> Low</option>
+    	</select>
+    <button type="submit">Sort</button>
+</form>
+
     </div>
 
     <%

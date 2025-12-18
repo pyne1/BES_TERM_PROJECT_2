@@ -43,16 +43,20 @@ public class ProductListServlet extends HttpServlet {
         String view = request.getParameter("view");
         String brand = request.getParameter("brand");
         String category = request.getParameter("category");
+        
+        String sort = request.getParameter("sort");
+        if (sort == null) sort = "none";
+ 
 
         List<Product> products;
 
         if ("brand".equalsIgnoreCase(view) && brand != null && !brand.isEmpty()) {
-            products = ProductDao.getByBrand(brand);
+            products = ProductDao.getByBrand(brand, sort);
         } else if ("category".equalsIgnoreCase(view) && category != null && !category.isEmpty()) {
-            products = ProductDao.getByCategory(category);
+            products = ProductDao.getByCategory(category, sort);
         } else {
             view = "all";
-            products = ProductDao.getAllProducts();
+            products = ProductDao.getAllProducts(sort);
         }
 
         request.setAttribute("products", products);
@@ -61,6 +65,8 @@ public class ProductListServlet extends HttpServlet {
         request.setAttribute("selectedView", view);
         request.setAttribute("selectedBrand", brand);
         request.setAttribute("selectedCategory", category);
+        request.setAttribute("selectedSort", sort);
+
 
         request.getRequestDispatcher("items.jsp").forward(request, response);
     }
