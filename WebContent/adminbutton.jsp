@@ -1,16 +1,14 @@
 <%@ page import="model.Customer" %>
 
 <%
-    Customer current = (Customer) session.getAttribute("currentCustomer");
-    boolean isAdmin = false;
+    Customer adminBtnUser = (Customer) session.getAttribute("currentCustomer");
 
-    if (current != null && "admin@everything.yorku.ca".equalsIgnoreCase(current.getEmail())) {
-        isAdmin = true;
+    boolean isAdminUser = (adminBtnUser != null
+            && "admin@everything.yorku.ca".equalsIgnoreCase(adminBtnUser.getEmail()));
+
+    if (isAdminUser) {
+%>
+        <a href="admin?section=inventory" class="btn btn-warning">Admin Dashboard</a>
+<%
     }
 %>
-
-<% if (isAdmin) { %>
-    <a href="admin" style="color:red; font-weight:bold; margin-left:10px; text-decoration:none;">
-        Admin
-    </a>
-<% } %>

@@ -29,17 +29,15 @@
     </style>
 </head>
 <body>
+
 <%@ include file="logout.jsp" %>
 <%@ include file="adminbutton.jsp" %>
-
-
 
 <div class="logout-container">
     <a href="logout" class="logout-btn">Logout</a>
 </div>
 
 <div class="container">
-
     <h1>Your Shopping Cart</h1>
 
     <%
@@ -48,36 +46,40 @@
     %>
         <p>Your cart is empty.</p>
         <a href="catalog" class="btn">Continue Shopping</a>
-    </div>
-</body>
-</html>
     <%
-            return;
-        }
-
-        Collection<CartItem> items = cart.getItems();
+        } else {
+            Collection<CartItem> items = cart.getItems();
     %>
 
-    <table class="cart-table">
-        <tr>
-            <th>Item</th>
-            <th>Brand</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Total</th>
-            <th>Action</th>
-        </tr>
+        <table class="cart-table">
+            <tr>
+                <th>Item</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Qty</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
 
-        <%
-            for (CartItem ci : items) {
-                String id = ci.getProduct().getItemID();
-        %>
+            <%
+                for (CartItem ci : items) {
+                    String id = ci.getProduct().getItemID();
+            %>
+            <tr>
+                <td><%= ci.getProduct().getName() %></td>
+                <td><%= ci.getProduct().getBrand() %></td>
+                <td>$<%= String.format("%.2f", ci.getProduct().getPrice()) %></td>
 
-        <tr>
-            <td><%= ci.getProduct().getName() %></td>
-            <td><%= ci.getProduct().getBrand() %></td>
-            <td>$<%= String.format("%.2f", ci.getProduct().getPrice()) %></td>
+                <td>
+                    <form action="cart" method="get" class="qty-form">
+                        <input type="hidden" name="todo" value="update">
+                        <input type="hidden" name="itemID" value="<%= id %>">
+                        <input type="number" name="qty" value="<%= ci.getQuantity() %>" min="1">
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
 
+<<<<<<< Updated upstream
             <td>
                 <form action="cart" method="get" class="qty-form">
                     <input type="hidden" name="todo" value="update">
@@ -90,25 +92,28 @@
                     <button type="submit">Update</button>
                 </form>
             </td>
+=======
+                <td>$<%= String.format("%.2f", ci.getTotalPrice()) %></td>
+>>>>>>> Stashed changes
 
-            <td>$<%= String.format("%.2f", ci.getTotalPrice()) %></td>
+                <td>
+                    <a href="cart?todo=remove&itemID=<%= id %>" class="remove">Remove</a>
+                </td>
+            </tr>
+            <% } %>
 
-            <td>
-                <a href="cart?todo=remove&itemID=<%= id %>" class="remove">Remove</a>
-            </td>
-        </tr>
+        </table>
 
-        <% } %>
+        <h2 class="total">Total: $<%= String.format("%.2f", cart.getTotal()) %></h2>
 
-    </table>
+        <div class="actions">
+            <a href="catalog" class="btn">Continue Shopping</a>
+            <a href="checkout" class="checkout-btn">Checkout</a>
+        </div>
 
-    <h2 class="total">Total: $<%= String.format("%.2f", cart.getTotal()) %></h2>
-
-    <div class="actions">
-        <a href="catalog" class="btn">Continue Shopping</a>
-        <a href="checkout" class="checkout-btn">Checkout</a>
-    </div>
-
+    <%
+        } // end else
+    %>
 </div>
 
 </body>

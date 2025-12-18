@@ -17,7 +17,7 @@
 
 <body>
 <%@ include file="logout.jsp" %>
-<%@ include file="adminbutton.jsp" %>
+
 
 <h1>Admin Dashboard</h1>
 
