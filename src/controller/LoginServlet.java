@@ -45,9 +45,19 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession();
+    
+        HttpSession session = request.getSession(true);
         session.setAttribute("currentCustomer", customer);
 
-        response.sendRedirect(request.getContextPath() + "/catalog?view=all");
+  
+        String redirect = (String) session.getAttribute("redirectAfterLogin");
+
+        if (redirect != null) {
+            session.removeAttribute("redirectAfterLogin");
+            response.sendRedirect(request.getContextPath() + "/" + redirect);
+        } else {
+        
+            response.sendRedirect(request.getContextPath() + "/catalog?view=all");
+        }
     }
 }

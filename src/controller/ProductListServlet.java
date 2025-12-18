@@ -24,13 +24,8 @@ public class ProductListServlet extends HttpServlet {
                          HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        Object user = (session != null) ? session.getAttribute("currentCustomer") : null;
+    HttpSession session = request.getSession(true);
 
-        if (user == null) {
-            request.getRequestDispatcher("forceLogin.jsp").forward(request, response);
-            return;
-        }
         
      // Initialize session cart + cartCount from cookie (so badge isn't 0 after login)
         if (session.getAttribute("cart") == null) {

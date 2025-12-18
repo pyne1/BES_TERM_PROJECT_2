@@ -18,22 +18,18 @@ public class CheckoutServlet extends HttpServlet {
     private synchronized boolean approvePayment() {
         paymentCounter++;
         return paymentCounter % 3 != 0;
-        
-       // return true; //testing
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        HttpSession session = request.getSession(true);
 
         Customer customer = (Customer) session.getAttribute("currentCustomer");
         if (customer == null) {
-            request.getRequestDispatcher("forceLogin.jsp").forward(request, response);
+            session.setAttribute("redirectAfterLogin", "checkout");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -46,22 +42,17 @@ public class CheckoutServlet extends HttpServlet {
         request.setAttribute("cart", cart);
         request.getRequestDispatcher("checkout.jsp").forward(request, response);
     }
-    
-    
-    
 
     @Override
-    protected void doPost(HttpServletRequest request,  HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+        HttpSession session = request.getSession(true);
 
         Customer customer = (Customer) session.getAttribute("currentCustomer");
         if (customer == null) {
-            response.sendRedirect("login.jsp");
+            session.setAttribute("redirectAfterLogin", "checkout");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -70,8 +61,6 @@ public class CheckoutServlet extends HttpServlet {
             response.sendRedirect("cart");
             return;
         }
-        
-        
 
         String billingName = request.getParameter("billingName");
         String billingAddress = request.getParameter("billingAddress");
@@ -83,8 +72,6 @@ public class CheckoutServlet extends HttpServlet {
 
         boolean approved = approvePayment();
 
-        
-        
         if (!approved) {
             request.setAttribute("billingName", billingName);
             request.setAttribute("billingAddress", billingAddress);
@@ -95,17 +82,11 @@ public class CheckoutServlet extends HttpServlet {
             request.setAttribute("cardCvv", cardCvv);
             request.setAttribute("paymentError", "CC Authorization Failed.");
             request.setAttribute("cart", cart);
-           
-            
             request.getRequestDispatcher("checkout.jsp").forward(request, response);
             return;
         }
-        
-        
-       
+
         OrderDAO.saveOrder(customer.getEmail(), cart);
-        
-        
 
         request.setAttribute("billingName", billingName);
         request.setAttribute("billingAddress", billingAddress);
