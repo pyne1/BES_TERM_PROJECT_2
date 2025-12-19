@@ -69,19 +69,26 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
+        String billingName = request.getParameter("billingName");
+        String billingAddress = request.getParameter("billingAddress");
+        String shippingName = request.getParameter("shippingName");
+        String shippingAddress = request.getParameter("shippingAddress");
+        String cardNumber = request.getParameter("cardNumber");
+        String cardExpiry = request.getParameter("cardExpiry");
+        String cardCvv = request.getParameter("cardCvv");
+
+        request.setAttribute("billingName", billingName);
+        request.setAttribute("billingAddress", billingAddress);
+        request.setAttribute("shippingName", shippingName);
+        request.setAttribute("shippingAddress", shippingAddress);
+        request.setAttribute("cardNumber", cardNumber);
+        request.setAttribute("cardExpiry", cardExpiry);
+        request.setAttribute("cardCvv", cardCvv);
         request.setAttribute("cart", cart);
 
         boolean approved = approvePayment();
         if (!approved) {
             request.setAttribute("paymentError", "CC Authorization Failed.");
-<<<<<<< Updated upstream
-            request.setAttribute("cart", cart);
-<<<<<<< HEAD
-
-=======
-=======
->>>>>>> Stashed changes
->>>>>>> reon
             request.getRequestDispatcher("checkout.jsp").forward(request, response);
             return;
         }
