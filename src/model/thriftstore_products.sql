@@ -1,3 +1,3 @@
 
-SELECT * FROM brands
+SELECT * FROM customer; 
  
