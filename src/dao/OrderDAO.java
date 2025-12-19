@@ -162,4 +162,34 @@ public class OrderDAO {
             } catch (Exception ignored) {}
         }
     }
+    
+    public static List<Order> getOrdersByEmail(String email) {
+        List<Order> list = new ArrayList<>();
+        String sql = "SELECT id, customerEmail, total, orderDate " +
+                     "FROM orders WHERE customerEmail = ? " +
+                     "ORDER BY orderDate DESC";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order o = new Order();
+                    o.setId(rs.getInt("id"));
+                    o.setCustomerEmail(rs.getString("customerEmail"));
+                    o.setTotal(rs.getDouble("total"));
+                    o.setOrderDate(rs.getTimestamp("orderDate"));
+                    list.add(o);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
 }

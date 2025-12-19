@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.Customer" %>
+<%@ page import="java.util.List" %>
+<%@ page import="model.Order" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,14 +18,40 @@
     <h1>My Account</h1>
 
     <%
+        String accountMsg = (String) session.getAttribute("accountMsg");
+        if (accountMsg != null) {
+    %>
+        <div style="
+            margin: 10px 0;
+            padding: 10px 12px;
+            border: 1px solid #e31837;
+            background: #fdeaea;
+            color: #a40000;
+            border-radius: 6px;
+            font-weight: bold;
+        ">
+            <%= accountMsg %>
+        </div>
+    <%
+            session.removeAttribute("accountMsg"); // show once
+        }
+    %>
+
+    <%
         String error = (String) request.getAttribute("error");
         if (error != null) {
     %>
         <p style="color:red;"><%= error %></p>
     <%
         }
+
         Customer c = (Customer) request.getAttribute("customer");
         if (c == null) c = (Customer) session.getAttribute("currentCustomer");
+        if (c == null) {
+    %>
+        <p style="color:red; font-weight:bold;">No customer is loaded. Please log in again.</p>
+    <%
+        } else {
     %>
 
     <form action="<%= request.getContextPath() %>/account" method="post">
@@ -80,10 +109,49 @@
         <button type="submit" class="btn">Save Changes</button>
     </form>
 
+    <hr style="margin:25px 0;">
+
+    <h2>Purchase History</h2>
+
+    <%
+        List<Order> orders = (List<Order>) request.getAttribute("orders");
+        if (orders == null || orders.isEmpty()) {
+    %>
+        <p>No purchases yet.</p>
+    <%
+        } else {
+    %>
+        <table>
+            <tr>
+                <th>Order #</th>
+                <th>Date</th>
+                <th>Total</th>
+            </tr>
+            <%
+                for (Order o : orders) {
+            %>
+            <tr>
+                <td><%= o.getId() %></td>
+                <td><%= o.getOrderDate() %></td>
+                <td>$<%= String.format("%.2f", o.getTotal()) %></td>
+            </tr>
+            <%
+                }
+            %>
+        </table>
+    <%
+        }
+    %>
+
     <p style="margin-top:20px;">
         <a class="btn" href="<%= request.getContextPath() %>/catalog?view=all">Back to Catalog</a>
     </p>
 
+    <%
+        } // end else customer not null
+    %>
+
 </div>
 </body>
 </html>
+

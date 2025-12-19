@@ -76,6 +76,27 @@
     <%@ include file="cartIcon.jsp" %>
 
     <h1>Catalog</h1>
+<%
+    String cartMsg = (String) session.getAttribute("cartMsg");
+    if (cartMsg != null) {
+%>
+    <div style="
+        margin: 12px 0;
+        padding: 10px 12px;
+        border: 1px solid #e31837;
+        background: #fdeaea;
+        color: #a40000;
+        border-radius: 6px;
+        font-weight: bold;
+    ">
+        <%= cartMsg %>
+    </div>
+<%
+        session.removeAttribute("cartMsg"); // show once
+    }
+%>
+
+    
     <p>Browse all products, or filter by brand or category.</p>
 
     <%

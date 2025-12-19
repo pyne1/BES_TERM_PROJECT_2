@@ -3,10 +3,16 @@ package controller;
 import dao.CustomerDAO;
 import model.Customer;
 
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import dao.OrderDAO;
+import model.Order;
+import java.util.List;
+
+
 
 @WebServlet("/account")
 public class AccountServlet extends HttpServlet {
@@ -31,6 +37,9 @@ public class AccountServlet extends HttpServlet {
             current = fresh;
         }
 
+        List<Order> orders = OrderDAO.getOrdersByEmail(current.getEmail());
+        req.setAttribute("orders", orders);
+        
         req.setAttribute("customer", current);
         req.getRequestDispatcher("account.jsp").forward(req, resp);
     }

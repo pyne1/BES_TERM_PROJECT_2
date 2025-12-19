@@ -5,21 +5,7 @@
 <%
     Customer customer = (Customer) session.getAttribute("currentCustomer");
     Cart cart = (Cart) session.getAttribute("cart");
-
-    String billingNamePrefill = (String) request.getAttribute("billingName");
-    String billingAddressPrefill = (String) request.getAttribute("billingAddress");
-    String shippingNamePrefill = (String) request.getAttribute("shippingName");
-    String shippingAddressPrefill = (String) request.getAttribute("shippingAddress");
-    String cardNumberPrefill = (String) request.getAttribute("cardNumber");
-    String cardExpiryPrefill = (String) request.getAttribute("cardExpiry");
     String paymentError = (String) request.getAttribute("paymentError");
-
-    if (billingNamePrefill == null && customer != null) {
-        billingNamePrefill = customer.getFirstName() + " " + customer.getLastName();
-    }
-    if (shippingNamePrefill == null && customer != null) {
-        shippingNamePrefill = customer.getFirstName() + " " + customer.getLastName();
-    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +17,6 @@
 <body>
 <%@ include file="logout.jsp" %>
 <%@ include file="cartIcon.jsp" %>
-
 
 <div class="container">
     <h1>Checkout</h1>
@@ -73,7 +58,52 @@
         %>
     </div>
 
-    <h2>Billing and Shipping Information</h2>
+    <!-- READ-ONLY ACCOUNT INFO -->
+    <hr style="margin:18px 0;">
+
+    <h2>Account Info (On File)</h2>
+
+    <%
+        String fullName = (customer == null) ? "" : (customer.getFirstName() + " " + customer.getLastName());
+
+        String shippingLine = (customer != null && customer.getShippingAddress() != null) ? customer.getShippingAddress() : "";
+        String shippingCity = (customer != null && customer.getShippingCity() != null) ? customer.getShippingCity() : "";
+        String shippingPostal = (customer != null && customer.getShippingPostal() != null) ? customer.getShippingPostal() : "";
+
+        String billingLine = (customer != null && customer.getBillingAddress() != null) ? customer.getBillingAddress() : "";
+        String billingCity = (customer != null && customer.getBillingCity() != null) ? customer.getBillingCity() : "";
+        String billingPostal = (customer != null && customer.getBillingPostal() != null) ? customer.getBillingPostal() : "";
+
+        String cc = (customer != null && customer.getCreditCardNumber() != null) ? customer.getCreditCardNumber() : "";
+        String last4 = (cc.length() >= 4) ? cc.substring(cc.length() - 4) : "";
+        String expiry = (customer != null && customer.getCreditCardExpiry() != null) ? customer.getCreditCardExpiry() : "";
+    %>
+
+    <div style="padding:10px; border:1px solid #ddd; border-radius:8px; background:#fafafa;">
+        <p><strong>Name:</strong> <%= fullName %></p>
+
+        <p><strong>Shipping:</strong><br>
+            <%= shippingLine %><br>
+            <%= shippingCity %> <%= shippingPostal %>
+        </p>
+
+        <p><strong>Billing:</strong><br>
+            <%= billingLine %><br>
+            <%= billingCity %> <%= billingPostal %>
+        </p>
+
+        <p><strong>Payment:</strong><br>
+            Card ending in <strong><%= last4 %></strong>
+            <% if (expiry != null && !expiry.isEmpty()) { %>
+                (Exp: <%= expiry %>)
+            <% } %>
+        </p>
+
+        <p style="margin-top:10px;">
+            <a class="btn-link" href="<%= request.getContextPath() %>/account">Edit in Account</a>
+        </p>
+    </div>
+    <!-- END READ-ONLY ACCOUNT INFO -->
 
     <%
         if (paymentError != null) {
@@ -84,38 +114,6 @@
     %>
 
     <form action="checkout" method="post">
-        <h3>Billing Information</h3>
-        <label>Full Name:</label><br>
-        <input type="text" name="billingName"
-               value="<%= billingNamePrefill != null ? billingNamePrefill : "" %>"
-               required><br><br>
-
-        <label>Billing Address:</label><br>
-        <textarea name="billingAddress" rows="3" cols="50" required><%= billingAddressPrefill != null ? billingAddressPrefill : "" %></textarea><br><br>
-
-        <h3>Shipping Information</h3>
-        <label>Full Name:</label><br>
-        <input type="text" name="shippingName"
-               value="<%= shippingNamePrefill != null ? shippingNamePrefill : "" %>"
-               required><br><br>
-
-        <label>Shipping Address:</label><br>
-        <textarea name="shippingAddress" rows="3" cols="50" required><%= shippingAddressPrefill != null ? shippingAddressPrefill : "" %></textarea><br><br>
-
-        <h3>Payment Information</h3>
-        <label>Card Number:</label><br>
-        <input type="text" name="cardNumber"
-               value="<%= cardNumberPrefill != null ? cardNumberPrefill : "" %>"
-               required><br><br>
-
-        <label>Expiry (MM/YY):</label><br>
-        <input type="text" name="cardExpiry"
-               value="<%= cardExpiryPrefill != null ? cardExpiryPrefill : "" %>"
-               required><br><br>
-
-        <label>CVV:</label><br>
-        <input type="password" name="cardCvv" required><br><br>
-
         <button type="submit">Confirm Order</button>
     </form>
 
@@ -125,3 +123,4 @@
 </div>
 </body>
 </html>
+
