@@ -40,26 +40,26 @@ public class ProductListServlet extends HttpServlet {
         String category = request.getParameter("category");
 
         String q = request.getParameter("q");
-        String type = request.getParameter("type");
-        String genre = request.getParameter("genre");
 
         String sort = request.getParameter("sort");
         if (sort == null) sort = "none";
 
         List<Product> products;
 
-        boolean hasSearch =
-                (q != null && !q.trim().isEmpty()) ||
-                (type != null && !type.trim().isEmpty()) ||
-                (genre != null && !genre.trim().isEmpty());
+        boolean hasSearch = (q != null && !q.trim().isEmpty());
 
+        // Decide view + query
         if ("search".equalsIgnoreCase(view) || hasSearch) {
             view = "search";
-            products = ProductDao.search(q, type, genre, sort);
+            // Reuse your existing DAO method: pass null for removed filters
+            products = ProductDao.search(q, null, null, sort);
+
         } else if ("brand".equalsIgnoreCase(view) && brand != null && !brand.isEmpty()) {
             products = ProductDao.getByBrand(brand, sort);
+
         } else if ("category".equalsIgnoreCase(view) && category != null && !category.isEmpty()) {
             products = ProductDao.getByCategory(category, sort);
+
         } else {
             view = "all";
             products = ProductDao.getAllProducts(sort);
@@ -68,14 +68,13 @@ public class ProductListServlet extends HttpServlet {
         request.setAttribute("products", products);
         request.setAttribute("brands", ProductDao.getAllBrands());
         request.setAttribute("categories", ProductDao.getAllCategories());
+
         request.setAttribute("selectedView", view);
         request.setAttribute("selectedBrand", brand);
         request.setAttribute("selectedCategory", category);
         request.setAttribute("selectedSort", sort);
 
         request.setAttribute("q", q == null ? "" : q);
-        request.setAttribute("type", type == null ? "" : type);
-        request.setAttribute("genre", genre == null ? "" : genre);
 
         request.getRequestDispatcher("items.jsp").forward(request, response);
     }
@@ -116,3 +115,4 @@ public class ProductListServlet extends HttpServlet {
         return cart;
     }
 }
+

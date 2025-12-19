@@ -15,7 +15,7 @@
          alt="York University Logo" 
          style="width:500px; margin-bottom:20px;">
 
-    <h1>Everything YorkU Thift</h1>
+    <h1>Everything YorkU Thrift</h1>
     <a href="catalog" class="btn">Browse Catalog</a>
     <p class="subtitle">Buy, Sell, and Discover Affordable Items on Campus</p>
 

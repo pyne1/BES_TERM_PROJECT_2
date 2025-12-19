@@ -16,12 +16,13 @@
 </head>
 <body>
 <%@ include file="logout.jsp" %>
-<%@ include file="cartIcon.jsp" %>
+
+
 
 <div class="container">
     <h1>Checkout</h1>
 
-    <div style="margin-bottom:20px;">
+    <div style="margin-bottom:20px; max-width: 600px; text-align: center;">
         <h2>Order Summary</h2>
         <%
             if (cart == null || cart.getItems().isEmpty()) {
@@ -30,13 +31,13 @@
         <%
             } else {
         %>
-        <table>
-            <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Subtotal</th>
-            </tr>
+		<table style="margin: 0 auto; border-collapse: collapse;">
+    	<tr>
+        	<th style="padding: 8px 20px;">Item</th>
+        	<th style="padding: 8px 20px;">Qty</th>
+        	<th style="padding: 8px 20px;">Price</th>
+        	<th style="padding: 8px 20px;">Subtotal</th>
+    	</tr>
             <%
                 for (CartItem ci : cart.getItems()) {
             %>
@@ -50,7 +51,7 @@
                 }
             %>
         </table>
-        <p style="margin-top:10px; font-weight:bold;">
+        <p style="margin-top:20px; padding-left:60px; padding-top:10px; font-weight:bold;">
             Total: $<%= String.format("%.2f", cart.getTotal()) %>
         </p>
         <%

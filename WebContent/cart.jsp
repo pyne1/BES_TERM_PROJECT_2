@@ -79,7 +79,7 @@
                     </form>
                 </td>
 
-<<<<<<< Updated upstream
+
             <td>
                 <form action="cart" method="get" class="qty-form">
                     <input type="hidden" name="todo" value="update">
@@ -92,9 +92,9 @@
                     <button type="submit">Update</button>
                 </form>
             </td>
-=======
+
                 <td>$<%= String.format("%.2f", ci.getTotalPrice()) %></td>
->>>>>>> Stashed changes
+
 
                 <td>
                     <a href="cart?todo=remove&itemID=<%= id %>" class="remove">Remove</a>
@@ -108,7 +108,7 @@
 
         <div class="actions">
             <a href="catalog" class="btn">Continue Shopping</a>
-            <a href="checkout" class="checkout-btn">Checkout</a>
+            <a href="checkout" class="btn">Checkout</a>
         </div>
 
     <%

@@ -110,14 +110,11 @@
         String selectedSort = (String) request.getAttribute("selectedSort");
 
         String q = (String) request.getAttribute("q");
-        String type = (String) request.getAttribute("type");
-        String genre = (String) request.getAttribute("genre");
 
         if (selectedSort == null) selectedSort = "none";
         if (selectedView == null) selectedView = "all";
         if (q == null) q = "";
-        if (type == null) type = "";
-        if (genre == null) genre = "";
+
     %>
 
     <div class="filters">
@@ -126,44 +123,14 @@
             <button type="submit">View All</button>
         </form>
 
-        <form action="catalog" method="get" style="display:inline;">
-            <input type="hidden" name="view" value="search">
-            <label>Search:</label>
-            <input type="text" name="q" placeholder="keyword..." value="<%= q %>">
+		<form action="catalog" method="get" style="display:inline;">
+    		<input type="hidden" name="view" value="search">
+    		<label>Search:</label>
+    		<input type="text" name="q" placeholder="keyword..." value="<%= q %>">
+    		<input type="hidden" name="sort" value="<%= selectedSort %>">
+    		<button type="submit">Search</button>
+		</form>
 
-            <label for="typeSelect">Type:</label>
-            <select name="type" id="typeSelect">
-                <option value="">-- any --</option>
-                <%
-                    if (categories != null) {
-                        for (String c : categories) {
-                            String sel = c.equals(type) ? "selected" : "";
-                %>
-                            <option value="<%= c %>" <%= sel %>><%= c %></option>
-                <%
-                        }
-                    }
-                %>
-            </select>
-
-            <label for="genreSelect">Genre:</label>
-            <select name="genre" id="genreSelect">
-                <option value="">-- any --</option>
-                <%
-                    if (brands != null) {
-                        for (String b : brands) {
-                            String sel = b.equals(genre) ? "selected" : "";
-                %>
-                            <option value="<%= b %>" <%= sel %>><%= b %></option>
-                <%
-                        }
-                    }
-                %>
-            </select>
-
-            <input type="hidden" name="sort" value="<%= selectedSort %>">
-            <button type="submit">Search</button>
-        </form>
 
         <form action="catalog" method="get" style="display:inline;">
             <label for="brandSelect">By Brand:</label>
@@ -211,14 +178,17 @@
             <input type="hidden" name="brand" value="<%= selectedBrand == null ? "" : selectedBrand %>">
             <input type="hidden" name="category" value="<%= selectedCategory == null ? "" : selectedCategory %>">
             <input type="hidden" name="q" value="<%= q %>">
-            <input type="hidden" name="type" value="<%= type %>">
-            <input type="hidden" name="genre" value="<%= genre %>">
 
-            <select name="sort" id="sortSelect">
-                <option value="none" <%= "none".equals(selectedSort) ? "selected" : "" %>>-- price --</option>
-                <option value="price_asc" <%= "price_asc".equals(selectedSort) ? "selected" : "" %>>Low -> High</option>
-                <option value="price_desc" <%= "price_desc".equals(selectedSort) ? "selected" : "" %>>High -> Low</option>
-            </select>
+			<select name="sort" id="sortSelect">
+    		<option value="none" <%= "none".equals(selectedSort) ? "selected" : "" %>>-- sort --</option>
+
+    		<option value="price_asc" <%= "price_asc".equals(selectedSort) ? "selected" : "" %>>Price: Low -> High</option>
+    		<option value="price_desc" <%= "price_desc".equals(selectedSort) ? "selected" : "" %>>Price: High -> Low</option>
+
+    		<option value="name_asc" <%= "name_asc".equals(selectedSort) ? "selected" : "" %>>Name: A -> Z</option>
+    		<option value="name_desc" <%= "name_desc".equals(selectedSort) ? "selected" : "" %>>Name: Z -> A</option>
+			</select>
+
             <button type="submit">Sort</button>
         </form>
     </div>

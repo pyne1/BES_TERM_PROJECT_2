@@ -32,12 +32,12 @@
         Cart cart = (Cart) request.getAttribute("cart");
         if (cart != null && cart.getItems() != null && !cart.getItems().isEmpty()) {
     %>
-    <table>
+    <table style="margin: 0 auto;">
         <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Price</th>
-            <th>Subtotal</th>
+        	<th style="padding: 8px 20px;">Item</th>
+        	<th style="padding: 8px 20px;">Qty</th>
+        	<th style="padding: 8px 20px;">Price</th>
+        	<th style="padding: 8px 20px;">Subtotal</th>
         </tr>
         <%
             for (CartItem ci : cart.getItems()) {
